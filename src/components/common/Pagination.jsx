@@ -4,14 +4,13 @@ import { useEffect, useState } from "react";
 function Pagination({ items, setItems, itemsPerPage }) {
   const [currentPage, setCurrentPage] = useState(1);
   const pagesCount = Math.ceil(items.length / itemsPerPage);
+  const safePage = Math.min(currentPage, Math.max(pagesCount, 1));
 
   useEffect(() => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
+    const startIndex = (safePage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedItems = items.slice(startIndex, endIndex);
-
-    setItems(paginatedItems);
-  }, [currentPage, items, itemsPerPage, setItems]);
+    setItems(items.slice(startIndex, endIndex));
+  }, [safePage, items, itemsPerPage, setItems]);
 
   const changePageHandler = (pageNumber) => setCurrentPage(pageNumber);
 
@@ -22,8 +21,8 @@ function Pagination({ items, setItems, itemsPerPage }) {
       pageNumbers.push(
         <button
           className={clsx("pagination-button", {
-            "active-tab": i === currentPage,
-            "not-active-tab": i !== currentPage,
+            "active-tab": i === safePage,
+            "not-active-tab": i !== safePage,
           })}
           key={i}
           onClick={() => setCurrentPage(i)}
@@ -39,10 +38,10 @@ function Pagination({ items, setItems, itemsPerPage }) {
   return (
     <div className="pagination bg-zinc-50/40" dir="rtl">
       <button
-        disabled={currentPage === 1}
-        onClick={() => changePageHandler(currentPage - 1)}
+        disabled={safePage === 1}
+        onClick={() => changePageHandler(safePage - 1)}
         className={clsx("pagination-prev-button select-none", {
-          "pages-ended active-tab": currentPage === 1,
+          "pages-ended active-tab": safePage === 1,
         })}
       >
         قبل
@@ -51,10 +50,10 @@ function Pagination({ items, setItems, itemsPerPage }) {
         {renderPageNumbers()}
       </div>
       <button
-        disabled={currentPage === pagesCount}
-        onClick={() => changePageHandler(currentPage + 1)}
+        disabled={safePage === pagesCount}
+        onClick={() => changePageHandler(safePage + 1)}
         className={clsx("pagination-next-button select-none", {
-          "pages-ended active-tab": currentPage === pagesCount,
+          "pages-ended active-tab": safePage === pagesCount,
         })}
       >
         بعد

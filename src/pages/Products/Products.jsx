@@ -4,12 +4,14 @@ import { products } from "@/data/products";
 import AddProductsFields from "@/features/ProductsTable/components/AddProductsFields";
 import ProductGridView from "@/features/ProductsView/ProductGridView";
 import ProductTableView from "@/features/ProductsView/ProductTableView";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CiGrid41, CiViewTable } from "react-icons/ci";
 
 function Products() {
-  const [layoutType, setLayoutType] = useState("TABLE");
+  const [allProducts, setAllProducts] = useState([...products]);
   const [paginatedProducts, setPaginatedProducts] = useState([...products]);
+
+  const [layoutType, setLayoutType] = useState("TABLE");
   const [newProduct, setNewProduct] = useState({
     title: "",
     description: "",
@@ -24,8 +26,13 @@ function Products() {
     setLayoutType(layout);
   };
 
+  const reversedProducts = useMemo(
+    () => [...allProducts].reverse(),
+    [allProducts],
+  );
+
   const createNewProduct = () => {
-    setPaginatedProducts((prevProducts) => [...prevProducts, newProduct]);
+    setAllProducts((prev) => [...prev, newProduct]);
     setNewProduct({
       title: "",
       description: "",
@@ -64,12 +71,12 @@ function Products() {
       <section className="mt-10 w-full! min-w-full!">
         {layoutType === "TABLE" ? (
           <>
-            <ProductTableView products={[...paginatedProducts].reverse()} />
+            <ProductTableView products={reversedProducts} />
           </>
         ) : (
           <>
             <ProductGridView
-              products={[...paginatedProducts].reverse()}
+              products={reversedProducts}
               paginatedProducts={paginatedProducts}
               setProducts={setPaginatedProducts}
             />

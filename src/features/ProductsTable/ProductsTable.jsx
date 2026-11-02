@@ -15,6 +15,7 @@ import TableHeadCell from "@/components/common/Table/elements/TableHeadCell";
 
 function ProductsTable() {
   const [lastProducts, setLastProducts] = useState([...products]);
+  const [allProducts, setAllProducts] = useState([...products]);
 
   const isProductAvailable = lastProducts.length !== 0;
 
@@ -31,8 +32,7 @@ function ProductsTable() {
   };
 
   const removeProduct = (id) => {
-    const newProducts = lastProducts.filter((product) => product.id !== id);
-    setLastProducts(newProducts);
+    setAllProducts((prev) => prev.filter((product) => product.id !== id));
   };
 
   const changeProductVisibility = (id) => {
@@ -51,7 +51,7 @@ function ProductsTable() {
         header={{ title: "لیست محصولات", Buttons: Buttons }}
         isProductAvailable={isProductAvailable}
         pagination={{
-          items: products,
+          items: allProducts,
           setItems: setLastProducts,
           itemsPerPage: 5,
         }}

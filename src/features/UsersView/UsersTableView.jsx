@@ -14,7 +14,7 @@ import AddUsersFields from "./components/AddUsersFields";
 
 function UsersTableView() {
   const [lastUsers, setLastUsers] = useState([...users]);
-  const [paginatedUsers, setPaginatedUsers] = useState([...users]);
+  const [allUsers, setAllUsers] = useState([...users]);
   const [newUser, setNewUser] = useState({
     fullName: "",
     userName: "",
@@ -24,24 +24,22 @@ function UsersTableView() {
     profile: "/images/profile-avatar.jpg",
   });
 
-  const isThereUsers = lastUsers.length !== 0;
+  const isThereUsers = allUsers.length !== 0;
 
-  const reversedUsers = useMemo(
-    () => [...paginatedUsers].reverse(),
-    [paginatedUsers],
-  );
+  const reversedUsers = useMemo(() => [...allUsers].reverse(), [allUsers]);
+
+  const removeUser = (id) => {
+    setAllUsers((prev) => prev.filter((user) => user.id !== id));
+  };
 
   const createNewUser = () => {
-    setPaginatedUsers((prevUsers) => [
-      ...prevUsers,
-      { ...newUser, id: crypto.randomUUID() },
-    ]);
+    setAllUsers((prev) => [...prev, { ...newUser, id: crypto.randomUUID() }]);
     setNewUser({
       fullName: "",
       userName: "",
       email: "",
       phoneNumber: "",
-      role: "",
+      role: { label: "", value: "" },
       profile: "/images/profile-avatar.jpg",
     });
   };
@@ -58,16 +56,11 @@ function UsersTableView() {
     </Modal>
   );
 
-  const removeUser = (id) => {
-    const newUsers = lastUsers.filter((user) => user.id !== id);
-    setLastUsers(newUsers);
-  };
-
   return (
     <div>
       <Table
         header={{
-          title: `مدیریت کاربران (${users.length} کاربر)`,
+          title: `مدیریت کاربران (${allUsers.length} کاربر)`,
           Buttons: Buttons,
         }}
         isProductAvailable={isThereUsers}
@@ -101,20 +94,20 @@ function UsersTableView() {
                     <p
                       className={clsx(
                         user.role.value === "USER"
-                          ? "py-0.5 px-2 border-2 rounded text-zinc-900 bg-green-500"
+                          ? "py-0.5 px-2 border rounded text-zinc-900 bg-green-500"
                           : user.role.value === "ADMIN"
-                            ? "py-0.5 px-2 border-2 rounded text-zinc-900 bg-blue-500"
+                            ? "py-0.5 px-2 border rounded text-zinc-900 bg-blue-500"
                             : user.role.value === "SUPPORT"
-                              ? "py-0.5 px-2 border-2 rounded text-zinc-900 bg-yellow-500"
+                              ? "py-0.5 px-2 border rounded text-zinc-900 bg-yellow-500"
                               : "",
                       )}
                     >
                       {user.role.label}
                     </p>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="flex items-center gap-3">
                     <RemoveUserIcon user={user} handler={removeUser} />
-                    <EditUserIcon user={user} onChange={setNewUser} />
+                    <EditUserIcon user={user} onChange={setAllUsers} />
                   </TableCell>
                 </TableRow>
               ))}

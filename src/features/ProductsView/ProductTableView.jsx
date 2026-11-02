@@ -13,10 +13,10 @@ import ChangeVisibilityIcon from "../ProductsTable/components/ChangeVisibilityIc
 
 function ProductTableView({ products }) {
   const [lastProducts, setLastProducts] = useState([...products]);
+  const [allProducts, setAllProducts] = useState([...products]);
 
   const removeProduct = (id) => {
-    const newProducts = lastProducts.filter((product) => product.id !== id);
-    setLastProducts(newProducts);
+    setAllProducts((prev) => prev.filter((product) => product.id !== id));
   };
 
   const changeProductVisibility = (id) => {
@@ -33,10 +33,10 @@ function ProductTableView({ products }) {
 
   return (
     <Table
-      header={{ title: "لیست محصولات" }}
+      header={{ title: `لیست محصولات (${allProducts.length} محصول)` }}
       isProductAvailable={isProductAvailable}
       pagination={{
-        items: products,
+        items: allProducts,
         setItems: setLastProducts,
         itemsPerPage: 4,
       }}
